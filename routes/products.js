@@ -22,8 +22,20 @@ router.post('/fetch-products', async (req, res) => {
 
     // Upsert products in MongoDB (to avoid duplicates)
     const upsertPromises = products.map(p =>
-      Product.findOneAndUpdate({ id: p.id }, p, { upsert: true, new: true })
-    );
+  Product.findOneAndUpdate(
+    { id: p.id },
+    {
+      title: p.title,
+      price: p.price,
+      description: p.description,
+      category: p.category,
+      image: p.image,
+      rating: p.rating
+    },
+    { upsert: true, new: true, runValidators: true }
+  )
+);
+
     const savedProducts = await Promise.all(upsertPromises);
 
     res.json(savedProducts);
